@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petri2Pin — track every culture from genetics to harvest</title>
+<meta name="description" content="Petri2Pin tracks a mushroom culture's full lineage — genetics, inoculation, spawn, fruiting, harvest — with a photo at every stage and a printable QR label for every jar.">
+
+<meta property="og:title" content="Petri2Pin">
+<meta property="og:description" content="Every jar has a story. Scan the label, see the whole thing — genetics to harvest.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://petri2pin.com">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Petri2Pin">
+<meta name="twitter:description" content="Every jar has a story. Scan the label, see the whole thing — genetics to harvest.">
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%2315130f'/><circle cx='16' cy='16' r='9' fill='none' stroke='%236f9159' stroke-width='2'/><circle cx='16' cy='16' r='2.5' fill='%238d6fa8'/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,450;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --soil-950:#15130f; --soil-900:#1a1712; --soil-800:#221d16; --soil-700:#2e2720; --soil-600:#3c332a;
+    --mycelium-50:#f2eee3; --mycelium-300:#b6ac99; --mycelium-500:#8a8071;
+    --moss-500:#6f9159; --moss-300:#a3c48c;
+    --spore-500:#8d6fa8; --spore-300:#bda6d1;
+    --gold-400:#cf9f3a; --gold-300:#e0be6f;
+    --serif:'Fraunces', serif; --sans:'Inter', sans-serif; --mono:'IBM Plex Mono', monospace;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{margin:0;background:var(--soil-950);color:var(--mycelium-50);font-family:var(--sans);line-height:1.6;}
+  a{color:inherit;}
+  ::selection{background:var(--spore-500);color:var(--soil-950);}
+  img{max-width:100%;display:block;}
+
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+
+  /* -------- nav -------- */
+  nav{display:flex;align-items:center;justify-content:space-between;padding:24px 0;}
+  .wordmark{font-family:var(--serif);font-weight:700;font-size:20px;}
+  .wordmark em{font-style:italic;font-weight:500;color:var(--moss-300);}
+  .nav-cta{background:var(--moss-500);color:var(--soil-950);font-weight:600;font-size:13.5px;padding:9px 18px;border-radius:7px;text-decoration:none;}
+  .nav-cta:hover{background:var(--moss-300);}
+
+  /* -------- hero -------- */
+  .hero{padding:64px 0 90px;display:grid;grid-template-columns:1.1fr 1fr;gap:48px;align-items:center;}
+  .hero h1{font-family:var(--serif);font-size:44px;line-height:1.08;margin:0 0 20px;letter-spacing:-.01em;}
+  .hero h1 em{font-style:italic;color:var(--moss-300);font-weight:500;}
+  .hero p.lead{color:var(--mycelium-300);font-size:17px;max-width:46ch;margin:0 0 28px;}
+  .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;}
+  .btn{display:inline-block;font-weight:600;font-size:14.5px;padding:13px 24px;border-radius:8px;text-decoration:none;transition:.15s;}
+  .btn-primary{background:var(--moss-500);color:var(--soil-950);}
+  .btn-primary:hover{background:var(--moss-300);}
+  .btn-ghost{border:1px solid var(--soil-600);color:var(--mycelium-50);}
+  .btn-ghost:hover{border-color:var(--mycelium-500);}
+
+  /* -------- signature: QR unfurl -------- */
+  .qr-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:320px;}
+  .qr-card{
+    background:var(--soil-800);border:1px solid var(--soil-700);border-radius:16px;padding:22px;
+    display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1), opacity .4s;
+    width:230px; user-select:none;
+  }
+  .qr-card img{width:150px;height:150px;border-radius:8px;background:#fff;padding:8px;}
+  .qr-card .hint{font-size:11.5px;color:var(--mycelium-300);font-family:var(--mono);letter-spacing:.02em;}
+  .qr-stage.flipped .qr-card{transform:rotateY(90deg) scale(.85);opacity:0;pointer-events:none;position:absolute;}
+
+  .record-card{
+    background:var(--soil-800);border:1px solid var(--soil-700);border-radius:16px;padding:22px;width:270px;
+    opacity:0;transform:rotateY(-90deg) scale(.85);transition:transform .5s .12s cubic-bezier(.2,.8,.2,1), opacity .4s .12s;
+    position:absolute;
+  }
+  .qr-stage.flipped .record-card{opacity:1;transform:rotateY(0) scale(1);position:relative;}
+  .record-card .thumb{height:110px;border-radius:8px;margin-bottom:12px;background:linear-gradient(135deg,#2e3f26,#1a1712);}
+  .record-card h4{font-family:var(--serif);font-size:17px;margin:0 0 2px;}
+  .record-card .strain{color:var(--mycelium-300);font-size:12px;margin-bottom:10px;}
+  .stage-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;padding:3px 9px;border-radius:20px;background:var(--soil-900);color:var(--gold-300);margin-bottom:10px;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--gold-400);display:inline-block;}
+  .mini-timeline{position:relative;padding-left:16px;margin-top:8px;}
+  .mini-timeline::before{content:'';position:absolute;left:2px;top:2px;bottom:2px;width:2px;background:var(--moss-500);opacity:.5;border-radius:2px;}
+  .mini-timeline .pt{position:relative;font-size:11px;color:var(--mycelium-300);margin-bottom:8px;font-family:var(--mono);}
+  .mini-timeline .pt::before{content:'';position:absolute;left:-16px;top:3px;width:7px;height:7px;border-radius:50%;background:var(--moss-500);border:2px solid var(--soil-800);}
+  .qr-caption{text-align:center;color:var(--mycelium-500);font-size:12px;margin-top:16px;font-family:var(--mono);}
+
+  /* -------- chain section -------- */
+  .section{padding:80px 0;border-top:1px solid var(--soil-700);}
+  .eyebrow{font-family:var(--mono);font-size:12px;color:var(--spore-300);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px;}
+  .section h2{font-family:var(--serif);font-size:32px;margin:0 0 14px;max-width:20ch;}
+  .section p.deck{color:var(--mycelium-300);font-size:15.5px;max-width:56ch;margin:0 0 48px;}
+
+  .chain{position:relative;padding-left:30px;}
+  .chain::before{
+    content:'';position:absolute;left:6px;top:8px;bottom:8px;width:16px;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='40'><path d='M8 0 C 1 7, 15 11, 8 18 C 1 25, 15 29, 8 40' stroke='%236f9159' stroke-width='1.6' fill='none' opacity='0.55'/></svg>");
+    background-repeat:repeat-y;
+  }
+  .chain-node{position:relative;margin-bottom:34px;}
+  .chain-node::before{content:'';position:absolute;left:-30px;top:6px;width:10px;height:10px;border-radius:50%;background:var(--moss-500);border:2px solid var(--soil-950);}
+  .chain-node h3{font-family:var(--serif);font-size:19px;margin:0 0 4px;}
+  .chain-node h3 span{color:var(--mycelium-500);font-family:var(--mono);font-size:13px;font-weight:400;margin-right:10px;}
+  .chain-node p{color:var(--mycelium-300);font-size:14.5px;margin:0;max-width:52ch;}
+
+  /* -------- feature grid -------- */
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  .grid3.grid2{grid-template-columns:1fr 1fr;}
+  .feature{background:var(--soil-800);border:1px solid var(--soil-700);border-radius:12px;padding:24px;}
+  .feature .icon{width:34px;height:34px;border-radius:9px;background:var(--soil-900);display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:16px;}
+  .feature h3{font-family:var(--serif);font-size:17px;margin:0 0 8px;}
+  .feature p{color:var(--mycelium-300);font-size:14px;margin:0;}
+
+  .founding-card{border-color:var(--spore-500);}
+  .founding-count{font-family:var(--mono);font-size:12px;color:var(--gold-300);letter-spacing:.08em;margin-bottom:12px;}
+
+  /* -------- label showcase -------- */
+  .label-showcase{display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;}
+  .physical-label{
+    background:#fdfcf8;color:#1a1712;border-radius:8px;padding:16px 18px;width:230px;
+    transform:rotate(-3deg);box-shadow:0 18px 40px rgba(0,0,0,.35);font-family:var(--sans);
+  }
+  .physical-label h4{font-family:var(--serif);margin:0 0 2px;font-size:15px;}
+  .physical-label .sub{font-size:10.5px;color:#666;margin-bottom:10px;}
+  .physical-label img{width:100px;height:100px;margin:0 auto;}
+  .physical-label .meta{font-size:9px;color:#777;font-family:var(--mono);text-align:center;margin-top:8px;}
+
+  /* -------- early note -------- */
+  .early-note{background:var(--spore-900,#2c2233);border:1px solid var(--spore-500);border-radius:12px;padding:22px 26px;max-width:640px;}
+  .early-note p{margin:0;color:var(--spore-300);font-size:14.5px;}
+
+  /* -------- final cta -------- */
+  .final-cta{text-align:center;padding:90px 0;}
+  .final-cta h2{font-family:var(--serif);font-size:36px;margin:0 0 16px;}
+  .final-cta p{color:var(--mycelium-300);margin:0 0 30px;}
+
+  footer{border-top:1px solid var(--soil-700);padding:28px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;color:var(--mycelium-500);font-size:12.5px;}
+  footer a{color:var(--mycelium-300);}
+
+  @media(max-width:860px){
+    .hero{grid-template-columns:1fr;padding-top:32px;}
+    .grid3{grid-template-columns:1fr;}
+    .hero h1{font-size:34px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    .qr-card, .record-card{transition:none;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <nav>
+    <div class="wordmark">Petri<em>2</em>Pin</div>
+    <a class="nav-cta" href="https://petri2pin.app">Open the app</a>
+  </nav>
+
+  <section class="hero">
+    <div>
+      <h1>Every jar has a story.<br>Now it has a <em>page</em>.</h1>
+      <p class="lead">Petri2Pin tracks a culture's full lineage — genetics, inoculation, spawn, fruiting, harvest — with a photo at every stage. Print a label, stick it on the jar, and that QR code is the jar's whole life.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-primary" href="https://petri2pin.app">Start tracking — it's free</a>
+        <a class="btn btn-ghost" href="#chain">See how it works</a>
+      </div>
+    </div>
+    <div class="qr-stage" id="qrStage">
+      <div class="qr-card" id="qrCard">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://petri2pin.app" alt="QR code linking to Petri2Pin">
+        <div class="hint">↑ scan it, or click</div>
+      </div>
+      <div class="record-card" id="recordCard">
+        <div class="thumb"></div>
+        <h4>Pleurotus ostreatus</h4>
+        <div class="strain">Blue Oyster</div>
+        <span class="stage-badge"><span class="dot"></span>Fruiting</span>
+        <div class="mini-timeline">
+          <div class="pt">day 1 · inoculated</div>
+          <div class="pt">day 9 · fully colonized</div>
+          <div class="pt">day 14 · first pins</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="qr-caption wrap" style="text-align:center;margin-top:-40px;margin-bottom:40px;">click the card again to flip it back</div>
+
+<div class="wrap" id="chain">
+  <section class="section">
+    <div class="eyebrow">the lineage</div>
+    <h2>One continuous thread, start to finish</h2>
+    <p class="deck">Every stage is its own record, linked to the one before it — so a fruiting tub doesn't just show its own history, it shows everything it came from.</p>
+    <div class="chain">
+      <div class="chain-node"><h3><span>01</span>Genetics</h3><p>The original sample — a print, a clone, a spore vial. Kept private; it's the root everything else traces back to.</p></div>
+      <div class="chain-node"><h3><span>02</span>Inoculation</h3><p>Agar, spore syringe, spore print, or liquid culture — started from your genetics, or propagated from an earlier inoculation.</p></div>
+      <div class="chain-node"><h3><span>03</span>Spawn</h3><p>Grain colonized from an inoculation. Log temp, humidity, and photos while it works.</p></div>
+      <div class="chain-node"><h3><span>04</span>Fruiting</h3><p>Spawn transferred to a bulk substrate and chamber. Pins, first flush, whatever comes next — it's all one page.</p></div>
+      <div class="chain-node"><h3><span>05</span>Flush</h3><p>Weigh the harvest, log the flush number, and the yield rolls up automatically.</p></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">what you get</div>
+    <h2>Built for how a cultivation actually goes</h2>
+    <p class="deck">Not a spreadsheet, not a generic notes app — fields and structure that match the actual process.</p>
+    <div class="grid3">
+      <div class="feature">
+        <div class="icon">📷</div>
+        <h3>A photo at every stage</h3>
+        <p>Not just the harvest shot — log conditions and pictures the moment you notice something, at any point in the chain.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔤</div>
+        <h3>Species and strains, kept consistent</h3>
+        <p>Autocomplete against a shared, moderated list — instead of "Golden Teacher," "golden teacher," and "GT" all being different entries.</p>
+      </div>
+      <div class="feature">
+        <div class="icon">🔒</div>
+        <h3>Private by default</h3>
+        <p>Every inoculation, spawn, and fruiting is shareable on its own — nothing goes public unless you choose it, stage by stage.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">the label</div>
+    <h2>Print it. Stick it. Scan it.</h2>
+    <p class="deck">Every record has a QR code built in. Print a label for the physical jar or tub, and anyone who scans it — including future you — lands right back on its page.</p>
+    <div class="label-showcase">
+      <div class="physical-label">
+        <h4>Pleurotus ostreatus</h4>
+        <div class="sub">Grain spawn · started Jun 2</div>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://petri2pin.app" alt="Sample QR label">
+        <div class="meta">petri2pin.app/spawns/…<br>printed Jul 14, 2026</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="eyebrow">founding members — capped at 100</div>
+    <h2>The first 100 get it free. Forever.</h2>
+    <p class="deck">Petri2Pin is brand new, and the people who join now are the reason it'll be worth joining later. In exchange, the first 100 accounts get lifetime access — split into two waves.</p>
+    <div class="grid3 grid2">
+      <div class="feature founding-card">
+        <div class="founding-count">01–25</div>
+        <h3>The Founding 25</h3>
+        <p>Full lifetime access, no exceptions — including anything added later. You're early enough that this is genuinely on the house.</p>
+      </div>
+      <div class="feature founding-card">
+        <div class="founding-count">26–100</div>
+        <h3>The Founding 75</h3>
+        <p>Lifetime access to everything Petri2Pin does today — the full lineage tracker, photo logging, QR labels, Community sharing. Future premium extras, if any, may be separate; the core tracker is yours for good.</p>
+      </div>
+    </div>
+    <div style="margin-top:28px">
+      <a class="btn btn-primary" href="https://petri2pin.app">Claim your spot</a>
+    </div>
+  </section>
+
+  <section class="final-cta">
+    <h2>Start your first culture</h2>
+    <p>Free to use. Your data stays private until you decide otherwise.</p>
+    <a class="btn btn-primary" href="https://petri2pin.app">Open Petri2Pin</a>
+  </section>
+
+  <footer>
+    <span>Petri2Pin</span>
+    <span><a href="https://petri2pin.app">app.petri2pin.app</a></span>
+  </footer>
+</div>
+
+<script>
+  const stage = document.getElementById('qrStage');
+  document.getElementById('qrCard').addEventListener('click', () => stage.classList.toggle('flipped'));
+  document.getElementById('recordCard').addEventListener('click', () => stage.classList.toggle('flipped'));
+</script>
+
+</body>
+</html>
